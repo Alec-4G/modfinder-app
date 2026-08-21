@@ -2,34 +2,80 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ModFinder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>ModFinder — моды для Minecraft</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+    <!-- Шапка -->
     <header class="header">
         <div class="header-content">
             <div class="logo">
                 <span class="logo-icon">⛏️</span>
                 <span class="logo-text">ModFinder</span>
             </div>
+            <span class="badge">BETA</span>
         </div>
     </header>
 
+    <!-- Поиск -->
     <div class="search-section">
-        <input type="text" id="searchInput" placeholder="🔍 Искать моды...">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="🔍 Искать моды, авторов..." autocomplete="off">
+            <button id="clearSearch" class="clear-btn" style="display:none;">✕</button>
+        </div>
     </div>
 
+    <!-- Категории -->
+    <div class="categories-section">
+        <div class="categories-scroll">
+            <button class="category-btn active" data-category="all">Все</button>
+            <button class="category-btn" data-category="optimization">⚡ Оптимизация</button>
+            <button class="category-btn" data-category="building">🏗️ Строительство</button>
+            <button class="category-btn" data-category="utility">🔧 Утилиты</button>
+            <button class="category-btn" data-category="magic">✨ Магия</button>
+            <button class="category-btn" data-category="tech">⚙️ Техника</button>
+        </div>
+    </div>
+
+    <!-- Счетчик результатов -->
     <div class="results-info">
         <span id="resultsCount">Показано 0 модов</span>
     </div>
 
+    <!-- Список модов -->
     <div id="modList" class="mod-grid"></div>
 
+    <!-- Футер -->
     <footer class="footer">
-        <p>Нажми "Скачать" — бот пришлёт .jar файл в чат</p>
+        <p>Все моды отправляются в формате .jar</p>
+        <p class="footer-sub">Выбери мод и нажми "Скачать"</p>
     </footer>
+
+    <!-- АДМИН-ПАНЕЛЬ (видна только админу) -->
+    <div id="adminPanel" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#161b22; border-top:2px solid #1f6feb; padding:20px; z-index:999; max-height:80vh; overflow-y:auto;">
+        <div style="max-width:600px; margin:0 auto;">
+            <h3 style="color:#58a6ff; margin-bottom:15px;">📤 Добавить мод</h3>
+            <form id="addModForm">
+                <input type="text" id="modName" placeholder="Название мода" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3;">
+                <input type="text" id="modAuthor" placeholder="Автор" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3;">
+                <input type="text" id="modVersion" placeholder="Версия (например 1.0.0)" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3;">
+                <textarea id="modDescription" placeholder="Описание мода" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3; min-height:60px;"></textarea>
+                <select id="modCategory" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3;">
+                    <option value="optimization">⚡ Оптимизация</option>
+                    <option value="building">🏗️ Строительство</option>
+                    <option value="utility">🔧 Утилиты</option>
+                    <option value="magic">✨ Магия</option>
+                    <option value="tech">⚙️ Техника</option>
+                </select>
+                <input type="file" id="modFile" accept=".jar" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3;">
+                <button type="submit" style="width:100%; padding:12px; background:#238636; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer;">✅ Добавить мод</button>
+            </form>
+            <button onclick="document.getElementById('adminPanel').style.display='none'" style="margin-top:10px; padding:8px 20px; background:#30363d; color:#e6edf3; border:none; border-radius:8px; cursor:pointer;">✕ Закрыть</button>
+            <div id="uploadStatus" style="margin-top:10px; color:#8b949e;"></div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
