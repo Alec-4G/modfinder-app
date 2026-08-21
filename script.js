@@ -39,6 +39,18 @@ const modsData = [
         category: 'utility',
         icon: '📦',
         tags: ['Рецепты', 'Интерфейс']
+    },
+    {
+    id: 'forge',
+    name: 'Forge',
+    author: 'Forge Team',
+    version: '61.2.0',
+    description: 'Установщик Forge для Minecraft 1.21.11. Необходим для запуска большинства модов.',
+    fileName: 'forge-1.21.11-61.2.0-installer.jar',  // ← ТОЧНОЕ ИМЯ ИЗ ПАПКИ
+    size: '8.5 MB',
+    category: 'utility',
+    icon: '🔧',
+    tags: ['Forge', 'API', 'Установщик']
     }
 ];
 
