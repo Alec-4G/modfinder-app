@@ -206,21 +206,33 @@ document.getElementById('addModForm').addEventListener('submit', async function(
     
     const reader = new FileReader();
     reader.onload = function(e) {
+    try {
         const base64 = e.target.result.split(',')[1];
         const modData = {
             name, author, version, description, category,
             fileName: file.name,
             fileData: base64
         };
-        tg.sendData('UPLOAD_MOD:' + JSON.stringify(modData));
+        
+        const jsonStr = JSON.stringify(modData);
+        console.log("Отправляю:", jsonStr.substring(0, 100) + "...");
+        
+        tg.sendData('UPLOAD_MOD:' + jsonStr);
+        
         document.getElementById('uploadStatus').textContent = '✅ Мод отправлен на сервер!';
         document.getElementById('uploadStatus').style.color = '#3fb950';
+        
         setTimeout(() => {
             document.getElementById('uploadStatus').textContent = '';
             document.getElementById('addModForm').reset();
             document.getElementById('adminPanel').style.display = 'none';
         }, 2000);
-    };
+    } catch (err) {
+        console.error("Ошибка:", err);
+        document.getElementById('uploadStatus').textContent = '❌ Ошибка: ' + err.message;
+        document.getElementById('uploadStatus').style.color = '#f85149';
+    }
+};
     reader.readAsDataURL(file);
 });
 
