@@ -10,7 +10,7 @@ const modsData = [
         author: 'sp614x',
         version: 'HD U I4',
         description: 'Оптимизация графики и производительности. Добавляет поддержку шейдеров и настройки FPS.',
-        fileName: 'OptiFine.jar',
+        fileName: 'OptiFine_1.21.11_HD_U_J9.jar',
         size: '4.2 MB',
         category: 'optimization',
         icon: '⚡',
