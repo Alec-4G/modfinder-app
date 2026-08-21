@@ -2,14 +2,14 @@
 const tg = window.Telegram.WebApp;
 tg.ready();
 
-// ===== ДАННЫЕ МОДОВ (с категориями) =====
+// ===== ДАННЫЕ МОДОВ =====
 const modsData = [
     {
         id: 'optifine',
         name: 'OptiFine',
         author: 'sp614x',
         version: 'HD U I4',
-        description: 'Оптимизация графики и производительности. Добавляет поддержку шейдеров и настройки FPS.',
+        description: 'Оптимизация графики и FPS. Добавляет шейдеры.',
         fileName: 'OptiFine_1.21.11_HD_U_J9.jar',
         size: '4.2 MB',
         category: 'optimization',
@@ -39,105 +39,28 @@ const modsData = [
         category: 'utility',
         icon: '📦',
         tags: ['Рецепты', 'Интерфейс']
-    },
-    {
-        id: 'xaeros-minimap',
-        name: "Xaero's Minimap",
-        author: 'xaero96',
-        version: '23.1.0',
-        description: 'Мини-карта с отображением координат, маркеров и спутников.',
-        fileName: 'XaerosMinimap.jar',
-        size: '2.1 MB',
-        category: 'utility',
-        icon: '🗺️',
-        tags: ['Карта', 'Навигация']
-    },
-    {
-        id: 'shulker-tooltip',
-        name: 'ShulkerBox Tooltip',
-        author: 'MisterPeModder',
-        version: '2.0.0',
-        description: 'Показывает содержимое шалкер-боксов прямо в инвентаре без открытия.',
-        fileName: 'ShulkerBoxTooltip.jar',
-        size: '0.8 MB',
-        category: 'utility',
-        icon: '📦',
-        tags: ['Инвентарь', 'Утилиты']
-    },
-    {
-        id: 'create',
-        name: 'Create',
-        author: 'simibubi',
-        version: '0.5.1',
-        description: 'Технический мод с механизмами, вращением и автоматизацией. Строительство фабрик.',
-        fileName: 'Create.jar',
-        size: '8.5 MB',
-        category: 'tech',
-        icon: '⚙️',
-        tags: ['Техника', 'Автоматизация']
-    },
-    {
-        id: 'botania',
-        name: 'Botania',
-        author: 'Vazkii',
-        version: '1.18.2-440',
-        description: 'Магия через природу. Создавай цветы, артефакты и автоматизируй магию.',
-        fileName: 'Botania.jar',
-        size: '3.2 MB',
-        category: 'magic',
-        icon: '✨',
-        tags: ['Магия', 'Цветы']
-    },
-    {
-        id: 'sodium',
-        name: 'Sodium',
-        author: 'JellySquid',
-        version: '0.4.10',
-        description: 'Мощная оптимизация рендеринга. Повышает FPS в разы на любом железе.',
-        fileName: 'Sodium.jar',
-        size: '1.1 MB',
-        category: 'optimization',
-        icon: '🚀',
-        tags: ['Оптимизация', 'FPS']
-    },
-    {
-        id: 'litematica',
-        name: 'Litematica',
-        author: 'masady',
-        version: '0.15.2',
-        description: 'Схемы и планирование построек. Строй как профессионал!',
-        fileName: 'Litematica.jar',
-        size: '2.3 MB',
-        category: 'building',
-        icon: '📐',
-        tags: ['Схемы', 'Строительство']
     }
 ];
 
 // ===== СОСТОЯНИЕ =====
 let currentCategory = 'all';
 let searchQuery = '';
-let visibleMods = [];
 
 // ===== DOM ЭЛЕМЕНТЫ =====
 const modList = document.getElementById('modList');
 const searchInput = document.getElementById('searchInput');
 const clearBtn = document.getElementById('clearSearch');
 const resultsCount = document.getElementById('resultsCount');
-const loadMoreBtn = document.getElementById('loadMoreBtn');
 
 // ===== ФУНКЦИИ =====
 
-// Фильтрация модов
 function getFilteredMods() {
     let filtered = [...modsData];
     
-    // Фильтр по категории
     if (currentCategory !== 'all') {
         filtered = filtered.filter(mod => mod.category === currentCategory);
     }
     
-    // Фильтр по поиску
     if (searchQuery.trim() !== '') {
         const query = searchQuery.toLowerCase().trim();
         filtered = filtered.filter(mod => 
@@ -151,7 +74,6 @@ function getFilteredMods() {
     return filtered;
 }
 
-// Создание карточки мода
 function createModCard(mod, index) {
     const card = document.createElement('div');
     card.className = 'mod-card';
@@ -176,7 +98,6 @@ function createModCard(mod, index) {
         </div>
     `;
     
-    // Обработчик кнопки
     const downloadBtn = card.querySelector('.download-btn');
     downloadBtn.addEventListener('click', function() {
         const fileName = this.dataset.filename;
@@ -187,12 +108,8 @@ function createModCard(mod, index) {
     return card;
 }
 
-// Отображение модов
 function displayMods() {
     const filtered = getFilteredMods();
-    visibleMods = filtered;
-    
-    // Обновляем счетчик
     resultsCount.textContent = `Показано ${filtered.length} модов`;
     
     if (filtered.length === 0) {
@@ -203,48 +120,38 @@ function displayMods() {
                 <p>Попробуй изменить поиск или категорию</p>
             </div>
         `;
-        loadMoreBtn.style.display = 'none';
         return;
     }
     
-    // Показываем все моды (без пагинации для простоты)
     modList.innerHTML = '';
     filtered.forEach((mod, index) => {
         const card = createModCard(mod, index);
         modList.appendChild(card);
     });
-    
-    loadMoreBtn.style.display = 'none';
 }
 
-// Обработка скачивания
 function handleDownload(fileName, modName) {
-    // Визуальная обратная связь
     tg.showPopup({
         title: `⏳ Отправка мода`,
         message: `Мод "${modName}" отправляется в чат...`,
         buttons: [{type: 'ok'}]
     });
     
-    // Отправка команды боту
     tg.sendData('DOWNLOAD:' + fileName);
     
-    // Хаптик (вибрация)
     if (tg.HapticFeedback) {
         tg.HapticFeedback.notificationOccurred('success');
     }
 }
 
-// ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
+// ===== ОБРАБОТЧИКИ =====
 
-// Поиск
 searchInput.addEventListener('input', function() {
     searchQuery = this.value;
     clearBtn.style.display = searchQuery ? 'flex' : 'none';
     displayMods();
 });
 
-// Очистка поиска
 clearBtn.addEventListener('click', function() {
     searchInput.value = '';
     searchQuery = '';
@@ -253,7 +160,6 @@ clearBtn.addEventListener('click', function() {
     searchInput.focus();
 });
 
-// Категории
 document.querySelectorAll('.category-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
@@ -263,8 +169,61 @@ document.querySelectorAll('.category-btn').forEach(btn => {
     });
 });
 
+// ===== АДМИН-ПАНЕЛЬ =====
+const ADMIN_ID = 6149681042; // ← ВСТАВЬ СВОЙ TELEGRAM ID
+
+const tgUser = tg.initDataUnsafe?.user;
+if (tgUser && tgUser.id === ADMIN_ID) {
+    document.getElementById('adminPanel').style.display = 'block';
+    
+    const adminBtn = document.createElement('button');
+    adminBtn.textContent = '➕';
+    adminBtn.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#1f6feb; color:white; border:none; border-radius:50%; width:60px; height:60px; font-size:30px; cursor:pointer; box-shadow:0 4px 15px rgba(31,111,235,0.4); z-index:998;';
+    adminBtn.onclick = () => {
+        document.getElementById('adminPanel').style.display = 'block';
+    };
+    document.body.appendChild(adminBtn);
+}
+
+document.getElementById('addModForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('modName').value.trim();
+    const author = document.getElementById('modAuthor').value.trim();
+    const version = document.getElementById('modVersion').value.trim();
+    const description = document.getElementById('modDescription').value.trim();
+    const category = document.getElementById('modCategory').value;
+    const file = document.getElementById('modFile').files[0];
+    
+    if (!name || !author || !version || !description || !file) {
+        document.getElementById('uploadStatus').textContent = '❌ Заполни все поля и выбери файл!';
+        document.getElementById('uploadStatus').style.color = '#f85149';
+        return;
+    }
+    
+    document.getElementById('uploadStatus').textContent = '⏳ Загрузка...';
+    document.getElementById('uploadStatus').style.color = '#8b949e';
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64 = e.target.result.split(',')[1];
+        const modData = {
+            name, author, version, description, category,
+            fileName: file.name,
+            fileData: base64
+        };
+        tg.sendData('UPLOAD_MOD:' + JSON.stringify(modData));
+        document.getElementById('uploadStatus').textContent = '✅ Мод отправлен на сервер!';
+        document.getElementById('uploadStatus').style.color = '#3fb950';
+        setTimeout(() => {
+            document.getElementById('uploadStatus').textContent = '';
+            document.getElementById('addModForm').reset();
+            document.getElementById('adminPanel').style.display = 'none';
+        }, 2000);
+    };
+    reader.readAsDataURL(file);
+});
+
 // ===== ЗАПУСК =====
 displayMods();
-
-// Сообщаем, что приложение готово
-console.log('✅ ModFinder готов к работе!');
+console.log('✅ ModFinder готов!');
