@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>ModFinder — моды для Minecraft</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">⛏️</span>
+                <span class="logo-text">ModFinder</span>
+            </div>
+            <span class="badge">BETA</span>
+        </div>
+    </header>
+
+    <!-- Поиск -->
+    <div class="search-section">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="🔍 Искать моды, авторов..." autocomplete="off">
+            <button id="clearSearch" class="clear-btn" style="display:none;">✕</button>
+        </div>
+    </div>
+
+    <!-- Категории -->
+    <div class="categories-section">
+        <div class="categories-scroll">
+            <button class="category-btn active" data-category="all">Все</button>
+            <button class="category-btn" data-category="optimization">⚡ Оптимизация</button>
+            <button class="category-btn" data-category="building">🏗️ Строительство</button>
+            <button class="category-btn" data-category="utility">🔧 Утилиты</button>
+            <button class="category-btn" data-category="magic">✨ Магия</button>
+            <button class="category-btn" data-category="tech">⚙️ Техника</button>
+        </div>
+    </div>
+
+    <!-- Счетчик результатов -->
+    <div class="results-info">
+        <span id="resultsCount">Показано 5 модов</span>
+    </div>
+
+    <!-- Список модов -->
+    <div id="modList" class="mod-grid">
+        <!-- Карточки будут добавлены через JavaScript -->
+    </div>
+
+    <!-- Кнопка "Загрузить еще" -->
+    <div class="load-more-section">
+        <button id="loadMoreBtn" class="load-more-btn" style="display:none;">Загрузить еще</button>
+    </div>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <p>Все моды отправляются в формате .jar</p>
+        <p class="footer-sub">Выбери мод и нажми "Скачать"</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
