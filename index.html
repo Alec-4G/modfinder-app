@@ -55,8 +55,8 @@
 <div id="adminPanel" class="admin-panel" style="display:none;">
     <div class="admin-card">
         <div class="admin-header">
-            <h2>Добавить мод</h2>
-            <button type="button" class="admin-close" onclick="document.getElementById('adminPanel').style.display='none';">✕</button>
+            <h2 id="adminTitle">Добавить мод</h2>
+            <button type="button" class="admin-close" id="adminCloseBtn">✕</button>
         </div>
         <form id="addModForm">
             <label>Название</label>
@@ -78,10 +78,12 @@
                 <option value="utility">Утилиты</option>
             </select>
 
-            <label>Файл (.jar)</label>
-            <input type="file" id="modFile" accept=".jar" required>
+            <div id="fileRow">
+                <label>Файл (.jar)</label>
+                <input type="file" id="modFile" accept=".jar">
+            </div>
 
-            <button type="submit" class="btn-primary">Загрузить мод</button>
+            <button type="submit" class="btn-primary" id="adminSubmitBtn">Загрузить мод</button>
             <div id="uploadStatus"></div>
         </form>
     </div>
