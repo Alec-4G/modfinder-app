@@ -2,81 +2,139 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>ModFinder — моды для Minecraft</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModFinder</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0d1117;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .card h3 {
+            margin-bottom: 4px;
+        }
+        .card .author {
+            color: #58a6ff;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .card .desc {
+            color: #8b949e;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        .btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #2ea043;
+        }
+        #status {
+            text-align: center;
+            padding: 10px;
+            color: #8b949e;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+        .mod-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Шапка -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <span class="logo-icon">⛏️</span>
-                <span class="logo-text">ModFinder</span>
-            </div>
-            <span class="badge">BETA</span>
-        </div>
-    </header>
+    <h1>⛏️ ModFinder</h1>
+    <div id="modList"></div>
+    <div id="status">Нажми "Скачать" — бот отправит файл</div>
 
-    <!-- Поиск -->
-    <div class="search-section">
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="🔍 Искать моды, авторов..." autocomplete="off">
-            <button id="clearSearch" class="clear-btn" style="display:none;">✕</button>
-        </div>
-    </div>
+    <script>
+        // ============================================
+        // 1. ПОДКЛЮЧАЕМ ТЕЛЕГРАМ
+        // ============================================
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        console.log('✅ Telegram WebApp готов');
 
-    <!-- Категории -->
-    <div class="categories-section">
-        <div class="categories-scroll">
-            <button class="category-btn active" data-category="all">Все</button>
-            <button class="category-btn" data-category="optimization">⚡ Оптимизация</button>
-            <button class="category-btn" data-category="building">🏗️ Строительство</button>
-            <button class="category-btn" data-category="utility">🔧 Утилиты</button>
-            <button class="category-btn" data-category="magic">✨ Магия</button>
-            <button class="category-btn" data-category="tech">⚙️ Техника</button>
-        </div>
-    </div>
+        // ============================================
+        // 2. ДАННЫЕ МОДОВ (ДОБАВЛЯЙ СВОИ)
+        // ============================================
+        const mods = [
+            {
+                name: 'OptiFine',
+                author: 'sp614x',
+                desc: 'Оптимизация FPS и шейдеры',
+                file: 'OptiFine_1.21.11_HD_U_J9.jar',
+                icon: '⚡'
+            },
+            {
+                name: 'Forge',
+                author: 'Forge Team',
+                desc: 'Установщик Forge',
+                file: 'forge-1.21.11-61.2.0-installer.jar',
+                icon: '🔧'
+            }
+        ];
 
-    <!-- Счетчик результатов -->
-    <div class="results-info">
-        <span id="resultsCount">Показано 0 модов</span>
-    </div>
+        // ============================================
+        // 3. ФУНКЦИЯ ОТПРАВКИ
+        // ============================================
+        function downloadMod(fileName) {
+            console.log('🔽 Нажата кнопка для:', fileName);
+            tg.sendData('DOWNLOAD:' + fileName);
+            tg.showPopup({
+                title: '✅ Отправлено!',
+                message: 'Бот отправляет мод в чат',
+                buttons: [{ type: 'ok' }]
+            });
+        }
 
-    <!-- Список модов -->
-    <div id="modList" class="mod-grid"></div>
+        // ============================================
+        // 4. ОТОБРАЖЕНИЕ КАРТОЧЕК
+        // ============================================
+        const list = document.getElementById('modList');
 
-    <!-- Футер -->
-    <footer class="footer">
-        <p>Все моды отправляются в формате .jar</p>
-        <p class="footer-sub">Выбери мод и нажми "Скачать"</p>
-    </footer>
+        mods.forEach(mod => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="mod-icon">${mod.icon}</div>
+                <h3>${mod.name}</h3>
+                <div class="author">${mod.author}</div>
+                <div class="desc">${mod.desc}</div>
+                <button class="btn" data-file="${mod.file}">⬇️ Скачать</button>
+            `;
 
-    <!-- АДМИН-ПАНЕЛЬ (видна только админу) -->
-    <div id="adminPanel" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#161b22; border-top:2px solid #1f6feb; padding:20px; z-index:999; max-height:80vh; overflow-y:auto;">
-        <div style="max-width:600px; margin:0 auto;">
-            <h3 style="color:#58a6ff; margin-bottom:15px;">📤 Добавить мод</h3>
-            <form id="addModForm">
-                <input type="text" id="modName" placeholder="Название мода" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3;">
-                <input type="text" id="modAuthor" placeholder="Автор" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3;">
-                <input type="text" id="modVersion" placeholder="Версия (например 1.0.0)" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3;">
-                <textarea id="modDescription" placeholder="Описание мода" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3; min-height:60px;"></textarea>
-                <select id="modCategory" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3;">
-                    <option value="optimization">⚡ Оптимизация</option>
-                    <option value="building">🏗️ Строительство</option>
-                    <option value="utility">🔧 Утилиты</option>
-                    <option value="magic">✨ Магия</option>
-                    <option value="tech">⚙️ Техника</option>
-                </select>
-                <input type="file" id="modFile" accept=".jar" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#e6edf3;">
-                <button type="submit" style="width:100%; padding:12px; background:#238636; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer;">✅ Добавить мод</button>
-            </form>
-            <button onclick="document.getElementById('adminPanel').style.display='none'" style="margin-top:10px; padding:8px 20px; background:#30363d; color:#e6edf3; border:none; border-radius:8px; cursor:pointer;">✕ Закрыть</button>
-            <div id="uploadStatus" style="margin-top:10px; color:#8b949e;"></div>
-        </div>
-    </div>
+            const btn = card.querySelector('.btn');
+            btn.addEventListener('click', function() {
+                const file = this.dataset.file;
+                downloadMod(file);
+            });
 
-    <script src="script.js"></script>
+            list.appendChild(card);
+        });
+
+        console.log('✅ Загружено модов:', mods.length);
+    </script>
 </body>
 </html>
