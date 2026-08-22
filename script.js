@@ -53,7 +53,6 @@ const modsData = [
     tags: ['Forge', 'API', 'Установщик']
     }
 ];
-
 // ===== СОСТОЯНИЕ =====
 let currentCategory = 'all';
 let searchQuery = '';
@@ -186,13 +185,12 @@ const ADMIN_ID = 6149681042; // ← ВСТАВЬ СВОЙ TELEGRAM ID
 
 const tgUser = tg.initDataUnsafe?.user;
 if (tgUser && tgUser.id === ADMIN_ID) {
-    document.getElementById('adminPanel').style.display = 'block';
-    
     const adminBtn = document.createElement('button');
-    adminBtn.textContent = '➕';
-    adminBtn.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#1f6feb; color:white; border:none; border-radius:50%; width:60px; height:60px; font-size:30px; cursor:pointer; box-shadow:0 4px 15px rgba(31,111,235,0.4); z-index:998;';
+    adminBtn.textContent = '＋';
+    adminBtn.className = 'admin-fab';
+    adminBtn.setAttribute('aria-label', 'Добавить мод');
     adminBtn.onclick = () => {
-        document.getElementById('adminPanel').style.display = 'block';
+        document.getElementById('adminPanel').style.display = 'grid';
     };
     document.body.appendChild(adminBtn);
 }
@@ -209,15 +207,15 @@ document.getElementById('addModForm').addEventListener('submit', async function(
     
     if (!name || !author || !version || !description || !file) {
         document.getElementById('uploadStatus').textContent = '❌ Заполни все поля и выбери файл!';
-        document.getElementById('uploadStatus').style.color = '#f85149';
+        document.getElementById('uploadStatus').style.color = '#f04848';
         return;
     }
     
     document.getElementById('uploadStatus').textContent = '⏳ Загрузка...';
-    document.getElementById('uploadStatus').style.color = '#8b949e';
+    document.getElementById('uploadStatus').style.color = '#9aa0a6';
     
     const reader = new FileReader();
-    reader.onload = function(e) {
+reader.onload = function(e) {
     try {
         const base64 = e.target.result.split(',')[1];
         const modData = {
@@ -232,7 +230,7 @@ document.getElementById('addModForm').addEventListener('submit', async function(
         tg.sendData('UPLOAD_MOD:' + jsonStr);
         
         document.getElementById('uploadStatus').textContent = '✅ Мод отправлен на сервер!';
-        document.getElementById('uploadStatus').style.color = '#3fb950';
+        document.getElementById('uploadStatus').style.color = '#1bd96a';
         
         setTimeout(() => {
             document.getElementById('uploadStatus').textContent = '';
@@ -242,7 +240,7 @@ document.getElementById('addModForm').addEventListener('submit', async function(
     } catch (err) {
         console.error("Ошибка:", err);
         document.getElementById('uploadStatus').textContent = '❌ Ошибка: ' + err.message;
-        document.getElementById('uploadStatus').style.color = '#f85149';
+        document.getElementById('uploadStatus').style.color = '#f04848';
     }
 };
     reader.readAsDataURL(file);
