@@ -97,15 +97,25 @@
         ];
 
         // ============================================
-        // 3. ФУНКЦИЯ ОТПРАВКИ
+        // 3. ФУНКЦИЯ ОТПРАВКИ (БЕЗ ПОПАПОВ)
         // ============================================
         function downloadMod(fileName) {
             console.log('🔽 Нажата кнопка для:', fileName);
+            
+            // Отправляем данные боту
             tg.sendData('DOWNLOAD:' + fileName);
-            tg.showPopup({
-                title: '✅ Отправлено!',
-                message: 'Бот отправляет мод в чат',
-                buttons: [{ type: 'ok' }]
+            
+            // Просто меняем текст на кнопке (обратная связь)
+            const btns = document.querySelectorAll('.btn');
+            btns.forEach(btn => {
+                if (btn.dataset.file === fileName) {
+                    btn.textContent = '✅ Отправлено';
+                    btn.style.background = '#238636';
+                    setTimeout(() => {
+                        btn.textContent = '⬇️ Скачать';
+                        btn.style.background = '#238636';
+                    }, 2000);
+                }
             });
         }
 
