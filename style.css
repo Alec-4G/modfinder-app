@@ -1,4 +1,3 @@
-
 /* ===========================================================
    MODFINDER — тема в духе Modrinth
    Тёмный фон, фирменный зелёный акцент, горизонтальные карточки
@@ -299,6 +298,24 @@ button, input, textarea, select {
     font-size: 11.5px;
     color: var(--text-faint);
     white-space: nowrap;
+}
+
+.edit-btn {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.edit-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
 }
 
 .download-btn {
