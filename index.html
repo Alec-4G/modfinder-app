@@ -1,150 +1,92 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ModFinder</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #0d1117;
-            color: white;
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        .card {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-        }
-        .card h3 {
-            margin-bottom: 4px;
-        }
-        .card .author {
-            color: #58a6ff;
-            font-size: 13px;
-            margin-bottom: 8px;
-        }
-        .card .desc {
-            color: #8b949e;
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
-        .btn {
-            background: #238636;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background: #2ea043;
-        }
-        #status {
-            text-align: center;
-            padding: 10px;
-            color: #8b949e;
-            font-size: 13px;
-            margin-top: 20px;
-        }
-        .mod-icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ModFinder</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>⛏️ ModFinder</h1>
-    <div id="modList"></div>
-    <div id="status">Нажми "Скачать" — бот отправит файл</div>
 
-    <script>
-        // ============================================
-        // 1. ПОДКЛЮЧАЕМ ТЕЛЕГРАМ
-        // ============================================
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        console.log('✅ Telegram WebApp готов');
+<header class="topbar">
+    <div class="brand">
+        <span class="brand-mark">⛏</span>
+        <span class="brand-name">ModFinder</span>
+    </div>
+    <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm10 2-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <input type="text" id="searchInput" placeholder="Поиск модов…" autocomplete="off">
+        <button id="clearSearch" class="clear-btn" style="display:none;" aria-label="Очистить">✕</button>
+    </div>
+</header>
 
-        // ============================================
-        // 2. ДАННЫЕ МОДОВ (ДОБАВЛЯЙ СВОИ)
-        // ============================================
-        const mods = [
-            {
-                name: 'OptiFine',
-                author: 'sp614x',
-                desc: 'Оптимизация FPS и шейдеры',
-                file: 'OptiFine_1.21.11_HD_U_J9.jar',
-                icon: '⚡'
-            },
-            {
-                name: 'Forge',
-                author: 'Forge Team',
-                desc: 'Установщик Forge',
-                file: 'forge-1.21.11-61.2.0-installer.jar',
-                icon: '🔧'
-            }
-        ];
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-title">Категории</div>
+        <nav class="category-list">
+            <button class="category-btn active" data-category="all">
+                <span class="cat-icon">▦</span> Все моды
+            </button>
+            <button class="category-btn" data-category="optimization">
+                <span class="cat-icon">⚡</span> Оптимизация
+            </button>
+            <button class="category-btn" data-category="building">
+                <span class="cat-icon">🏗</span> Строительство
+            </button>
+            <button class="category-btn" data-category="utility">
+                <span class="cat-icon">🧩</span> Утилиты
+            </button>
+        </nav>
+    </aside>
 
-        // ============================================
-        // 3. ФУНКЦИЯ ОТПРАВКИ (БЕЗ ПОПАПОВ)
-        // ============================================
-        function downloadMod(fileName) {
-            console.log('🔽 Нажата кнопка для:', fileName);
-            
-            // Отправляем данные боту
-            tg.sendData('DOWNLOAD:' + fileName);
-            
-            // Просто меняем текст на кнопке (обратная связь)
-            const btns = document.querySelectorAll('.btn');
-            btns.forEach(btn => {
-                if (btn.dataset.file === fileName) {
-                    btn.textContent = '✅ Отправлено';
-                    btn.style.background = '#238636';
-                    setTimeout(() => {
-                        btn.textContent = '⬇️ Скачать';
-                        btn.style.background = '#238636';
-                    }, 2000);
-                }
-            });
-        }
+    <main class="content">
+        <div class="results-bar">
+            <span id="resultsCount">Показано 0 модов</span>
+        </div>
+        <div id="modList" class="mod-list"></div>
+    </main>
+</div>
 
-        // ============================================
-        // 4. ОТОБРАЖЕНИЕ КАРТОЧЕК
-        // ============================================
-        const list = document.getElementById('modList');
+<!-- ===== АДМИН-ПАНЕЛЬ ===== -->
+<div id="adminPanel" class="admin-panel" style="display:none;">
+    <div class="admin-card">
+        <div class="admin-header">
+            <h2>Добавить мод</h2>
+            <button type="button" class="admin-close" onclick="document.getElementById('adminPanel').style.display='none';">✕</button>
+        </div>
+        <form id="addModForm">
+            <label>Название</label>
+            <input type="text" id="modName" placeholder="Название мода" required>
 
-        mods.forEach(mod => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <div class="mod-icon">${mod.icon}</div>
-                <h3>${mod.name}</h3>
-                <div class="author">${mod.author}</div>
-                <div class="desc">${mod.desc}</div>
-                <button class="btn" data-file="${mod.file}">⬇️ Скачать</button>
-            `;
+            <label>Автор</label>
+            <input type="text" id="modAuthor" placeholder="Ник автора" required>
 
-            const btn = card.querySelector('.btn');
-            btn.addEventListener('click', function() {
-                const file = this.dataset.file;
-                downloadMod(file);
-            });
+            <label>Версия</label>
+            <input type="text" id="modVersion" placeholder="Например 1.21.11" required>
 
-            list.appendChild(card);
-        });
+            <label>Описание</label>
+            <textarea id="modDescription" rows="3" placeholder="Коротко о моде" required></textarea>
 
-        console.log('✅ Загружено модов:', mods.length);
-    </script>
+            <label>Категория</label>
+            <select id="modCategory">
+                <option value="optimization">Оптимизация</option>
+                <option value="building">Строительство</option>
+                <option value="utility">Утилиты</option>
+            </select>
+
+            <label>Файл (.jar)</label>
+            <input type="file" id="modFile" accept=".jar" required>
+
+            <button type="submit" class="btn-primary">Загрузить мод</button>
+            <div id="uploadStatus"></div>
+        </form>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
